@@ -5,7 +5,7 @@ Handles JPG and PNG source images
 
 Exports to `./processed/{filename}.processed.{format}`
 
-## VENV
+### VENV
 Set up virtual environment
 `python -m venv .venv`
 
