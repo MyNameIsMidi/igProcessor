@@ -137,26 +137,31 @@ def main():
         print("Invalid selection for canvas size. Please select 1, 2, 3 or 4.")
         return
 
+    if canvas_choice != "4":
+        # Prompt for blur amount
+        try:
+            blur_amount = int(input("Enter the blur amount (e.g., 10): "))
+            if blur_amount < 0:
+                raise ValueError
+        except ValueError:
+            print("Invalid blur amount. Please enter a valid, non-negative integer.")
+            return
+    else:
+        blur_amount = 0
 
-    # Prompt for blur amount
-    try:
-        blur_amount = int(input("Enter the blur amount (e.g., 10): "))
-        if blur_amount < 0:
-            raise ValueError
-    except ValueError:
-        print("Invalid blur amount. Please enter a valid, non-negative integer.")
-        return
 
-
-    # Prompt for darkening factor
-    try:
-        darken_input = input("Enter a darkening factor (0 for black, 1 for original brightness): ")
-        darken_factor = float(darken_input)
-        if darken_factor < 0 or darken_factor > 1:
-            raise ValueError
-    except ValueError:
-        print("Darkening factor must be a number between 0 and 1.")
-        return
+    if canvas_choice != "4":
+        # Prompt for darkening factor
+        try:
+            darken_input = input("Enter a darkening factor (0 for black, 1 for original brightness): ")
+            darken_factor = float(darken_input)
+            if darken_factor < 0 or darken_factor > 1:
+                raise ValueError
+        except ValueError:
+            print("Darkening factor must be a number between 0 and 1.")
+            return
+    else:
+        darken_factor = 0
 
     
     process_images(folder_path, canvas_size, blur_amount, darken_factor)
