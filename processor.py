@@ -20,11 +20,17 @@ def process_images(folder_path, canvas_size=(1080, 1080), blur_amount=10, darken
 
 def process_image(image_path, canvas_size, blur_amount, darken_factor):
     with Image.open(image_path) as img:
+        # Check if we should keep the original size
+        if canvas_size[0] == -1:
+            effective_canvas_size = (img.width, img.height)
+        else:
+            effective_canvas_size = canvas_size
+
         # Create a canvas
-        canvas = Image.new('RGB', canvas_size, (255, 255, 255))
+        canvas = Image.new('RGB', effective_canvas_size, (255, 255, 255))
 
         # Resize image for background (object-fit: fill)
-        img_bg = resize_image(img, canvas_size, fit_canvas=True)
+        img_bg = resize_image(img, effective_canvas_size, fit_canvas=True)
         img_bg_blurred = img_bg.filter(ImageFilter.GaussianBlur(blur_amount))
 
         # Apply darkening to the blurred background
@@ -34,11 +40,11 @@ def process_image(image_path, canvas_size, blur_amount, darken_factor):
         canvas.paste(img_bg_blurred_darkened, (0, 0))
 
         # Resize image for foreground (object-fit: contain)
-        img_fg = resize_image(img, canvas_size)
+        img_fg = resize_image(img, effective_canvas_size)
 
         # Calculate position to paste the foreground image (centered)
-        fg_x = (canvas_size[0] - img_fg.width) // 2
-        fg_y = (canvas_size[1] - img_fg.height) // 2
+        fg_x = (effective_canvas_size[0] - img_fg.width) // 2
+        fg_y = (effective_canvas_size[1] - img_fg.height) // 2
 
         # Paste the foreground image
         canvas.paste(img_fg, (fg_x, fg_y), mask=create_mask(img_fg))
@@ -106,7 +112,8 @@ def main():
     print("1. 1080x1080")
     print("2. 1350x1080")
     print("3. Enter a custom resolution")
-    canvas_choice = input("Select size (1, 2, or 3): ")
+    print("4. Original size (No change)")
+    canvas_choice = input("Select size (1 - 4): ")
     
     # Validate canvas size selection and handle custom input
     if canvas_choice == "1":
@@ -124,8 +131,10 @@ def main():
         except ValueError:
             print("Invalid custom resolution. Please enter positive integers for width and height.")
             return
+    elif canvas_choice == "4":
+        canvas_size = (-1, -1)
     else:
-        print("Invalid selection for canvas size. Please select 1, 2, or 3.")
+        print("Invalid selection for canvas size. Please select 1, 2, 3 or 4.")
         return
 
 
